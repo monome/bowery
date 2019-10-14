@@ -6,6 +6,7 @@ druid script collection
 - [clockdiv.lua](clockdiv.lua): four configurable clock divisions of the input clock
 - [cvdelay.lua](cvdelay.lua): a control voltage delay with four taps & looping option
 - [gingerbread.lua](gingerbread.lua): clocked chaos generators
+- [lorenz.lua](lorenz.lua): lorenz attractor chaotic lfos
 - [samplehold-basic](samplehold-basic.lua): sample and hold basics for scripting tutorial
 - [samplehold.lua](samplehold.lua): sample and hold with quantization & randomness
 - [seqswitch.lua](seqswitch.lua): route an input to 1 of 4 outputs with optional 'hold'
