@@ -1,5 +1,5 @@
 # bowery
-druid script collection
+[druid](github.com/monome/druid) script collection
 
 - [boids.lua](boids.lua): four simulated birds that fly around your input
 - [booleanlogic.lua](booleanlogic.lua): logic gates determined by two input gates
@@ -11,3 +11,6 @@ druid script collection
 - [samplehold.lua](samplehold.lua): sample and hold with quantization & randomness
 - [seqswitch.lua](seqswitch.lua): route an input to 1 of 4 outputs with optional 'hold'
 - [shiftregister.lua](shiftregister.lua): output the last 4 captured voltages & play just friends
+
+learn how to upload scripts to crow using [***stage one*** of the crow scripting tutorial](https://monome.org/docs/crow/scripting)
+
