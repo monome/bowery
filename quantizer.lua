@@ -1,4 +1,5 @@
 --- quantizer example
+-- s wolk 2019.10.15
 -- in1: clock
 -- in2: voltage to quantize
 -- out1: in2 quantized to scale1 on clock pulses
