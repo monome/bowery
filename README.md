@@ -5,6 +5,7 @@
 - [booleanlogic.lua](booleanlogic.lua): logic gates determined by two input gates
 - [clockdiv.lua](clockdiv.lua): four configurable clock divisions of the input clock
 - [cvdelay.lua](cvdelay.lua): a control voltage delay with four taps & looping option
+- [euclidean.lua](euclidean.lua): a euclidean rhythm generator
 - [gingerbread.lua](gingerbread.lua): clocked chaos generators
 - [lorenz.lua](lorenz.lua): lorenz attractor chaotic lfos
 - [quantizer.lua](quantizer.lua): a continuous and clocked quantizer demo
