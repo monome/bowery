@@ -24,7 +24,7 @@ scale3 = majorTriad
 function quantize(volts,scale) 
 	local octave = math.floor(volts)
 	local interval = volts - octave
-	local semitones = interval / (n2v(1))
+	local semitones = interval / 12
 	local degree = 1
 	while degree < #scale and semitones > scale[degree+1]  do
 		degree = degree + 1
