@@ -59,7 +59,7 @@ input[2].stream = function(volts)
 	local newNote = quantize(volts,scale3)
 	
 	-- check if quantized voltage is equal to current voltage
-	if n2v(newNote) ~= output[3].volts then
+	if newNote / 12.0 ~= output[3].volts then
 		-- if not, update out3 to new voltage and pulse out4
 		output[3].volts = n2v(newNote)
 		output[4](pulse(0.01,8))
