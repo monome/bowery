@@ -5,7 +5,6 @@
 params = {}
 params.time = 1.0
 params.out  = 2.0
-params.add('time', )
 
 function init()
   output[1].action = pulse()
