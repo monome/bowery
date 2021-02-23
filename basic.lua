@@ -1,14 +1,12 @@
+--- basic.lua
 -- START MODULE
 
---- params library
---- FIXME should this be named Public as you are declaring vars as publicly accessible on the network
+--- params library -- RENAME PUBLIC
 Params = {} -- this 
 Params._names = {} -- keys are names, linked to indexed _params
 Params._params = {} -- storage of params
--- _params must contain: 'name', value
--- _params may contain: min, max, 'type', action, default
 
-Params.add = function(name, default, typ)
+Params.add = function(name, default, typ, action)
     local ix = Params._names[name]
     if not ix then
         ix = #(Params._params) + 1
@@ -20,10 +18,7 @@ Params.add = function(name, default, typ)
         -- TODO add 'action' handling - type match on function
         local t = type(typ)
         if t == 'string' then
-            if typ == 'integer' then p.type = 'i'
-            elseif typ == 'exp' then p.type = 'e'
-            else print 'unknown type restriction 1'
-            end
+            p.type = typ
         elseif t == 'table' then
             local len = #typ
             if len == 1 then -- assume 'integer' or 'exp'
@@ -37,8 +32,12 @@ Params.add = function(name, default, typ)
                 p.type = typ[3]
             else print 'unknown type restriction 2'
             end
+        elseif t == 'function' then
+            p.action = typ
         else print 'unknown type restriction 3'
         end
+        
+        if action then p.action = action end -- types & action
     end
 end
 
@@ -48,17 +47,36 @@ Params.clear = function()
   Params._params = {}
 end
 
+
 Params.discover = function()
   -- FIXME send type data in a table
   for _,p in ipairs(Params._params) do
+      -- name
+      local s = string.format('pub(%q,',p.k)
+      -- value
       if type(p.v) == 'string' then
-        _c.tell('pub',string.format('%q',p.k),string.format('%q',p.v))
+        s = string.format('%s%q,{',s,p.v)
       else
-        _c.tell('pub',string.format('%q',p.k),p.v)
+        s = s .. p.v .. ',{'
       end
-      
+      -- type
+      if p.min then s = string.format('%s%g,', s, p.min) end
+      if p.max then s = string.format('%s%g,', s, p.max) end
+      if p.type then s = string.format('%s%q', s, p.type) end
+      s = s .. '})'
+      print('^^'..s) -- send to remote
   end
   _c.tell('pub',string.format('%q','_end'))
+end
+
+-- Only called by remote device.
+Params.update = function(k,v)
+    local kix = Params._names[k]
+    if kix then
+        local p = Params._params[kix]
+        p.v = v
+        if p.action then p.action(v) end
+    end
 end
 
 --- METAMETHODS
@@ -66,9 +84,17 @@ end
 Params.__newindex = function(self, ix, val)
     local kix = Params._names[ix]
     if kix then
-        Params._params[kix].v = val
-        -- TODO update remote here
-        -- TODO suppress update if change comes from remote (will work, but redundant)
+        local p = Params._params[kix]
+        if p.min then -- clamp
+          val = (val > p.max) and p.max or val
+          val = (val < p.min) and p.min or val
+        end
+        p.v = val -- local storage
+        if type(p.v) == 'string' then
+          _c.tell('pupdate',string.format('%q,%q',p.k,p.v))
+        else
+          _c.tell('pupdate',string.format('%q',p.k),p.v)
+        end
     end
 end
 
@@ -95,13 +121,16 @@ public = Params
 -- public variables
 -- set with params.name = val
 -- get with n = params.name
--- public.add('range', 3, {0,10})
-public.add('range', 3)
-public.add('time', 1.1)
+public.add('range', 3, {0,10})
+-- public.add('range', 3)
+public.add('time', 1.1, function(v) print('time: '..v) end)
 public.add('str', 'hello')
 
 function init()
   input[1].mode('change',1,0.1,'rising')
+  metro[1].time = 3
+  metro[1].event = function(c) public.range = public.range + 1 end
+  metro[1]:start()
 end
 
 input[1].change = function()
