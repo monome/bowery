@@ -1,5 +1,6 @@
 --- gingerbread man chaotic attractor
 -- input1: clock
+-- input2: offset
 -- output1: X
 -- output2: Y
 

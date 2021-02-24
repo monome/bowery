@@ -1,4 +1,4 @@
---- sample & hold
+--- random hold
 -- in1: sampling clock
 -- out1: random sample
 

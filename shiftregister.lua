@@ -1,8 +1,8 @@
 --- digital analog shift register
 -- four stages of delay for an incoming cv
--- input 1: cv to delay
--- input 2: trigger to capture input & shift
--- output 1-4: newest to oldest output
+-- in1: cv to delay
+-- in2: trigger to capture input & shift
+-- out1-4: newest to oldest output
 -- ii: 6 stages of ASR via just friends
 
 reg = {}
@@ -20,7 +20,6 @@ function init()
     for i=1,reg_LEN do
         reg[i] = input[1].volts
     end
-    ii.pullup(true)
     ii.jf.mode(1)
     metro[1].event = iiseq
     metro[1].time  = 0.005

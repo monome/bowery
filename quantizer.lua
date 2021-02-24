@@ -1,5 +1,5 @@
---- quantizer example
--- s wolk 2019.10.15
+--- quantizer
+-- sam wolk 2019.10.15
 -- in1: clock
 -- in2: voltage to quantize
 -- out1: in2 quantized to scale1 on clock pulses
@@ -49,8 +49,8 @@ input[1].change = function(state)
 	local note2 = quantize(v,scale2)
 		
 	-- convert semitones to volts and update out1 & out2
-	output[1].volts = n2v(note1) 
-	output[2].volts = n2v(note2)
+	output[1].volts = note1/12
+	output[2].volts = note2/12
 end
 
 -- streaming handler; sets out3 & out4
@@ -59,9 +59,9 @@ input[2].stream = function(volts)
 	local newNote = quantize(volts,scale3)
 	
 	-- check if quantized voltage is equal to current voltage
-	if n2v(newNote) ~= output[3].volts then
+	if newNote/12 ~= output[3].volts then
 		-- if not, update out3 to new voltage and pulse out4
-		output[3].volts = n2v(newNote)
+		output[3].volts = newNote/12
 		output[4](pulse(0.01,8))
 	end
 end
@@ -69,7 +69,7 @@ end
 
 function init()
 	input[1].mode('change',1,0.1,'rising')
-	input[2].mode('stream',0.005)
+	input[2].mode('stream',0.05)
 	print('quantizer loaded')
 end
 
