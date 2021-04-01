@@ -17,6 +17,10 @@
 -- output adds these quant.ix and step.ix elements together, with a wrap, accumulating into octave
 -- output[2] & [3] pulse when the sequence rolls over down/up respectively
 
+--- tested and sounding nice, but is super dependent on the content of skal.
+-- next is obviously the interface for configuring skal with the interval based builder
+-- there is a clear 'melody folding' action happening, but should try the reducing-range style of mangrove
+
 skal = {0,2,4,7,9}
 quantskip = 0 -- integer steps per octave
 stepn = 1
@@ -62,5 +66,6 @@ function apply()
         oct = oct + 1
     end
 
-    output[1].volts = oct + skal[ix]/12
+    output[1].volts = oct + skal[ix+1]/12
+    output[4](ar())
 end
