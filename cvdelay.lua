@@ -1,33 +1,39 @@
 --- control voltage delay
 -- input1: CV to delay
--- input2: 0v = capture, 5v = loop
+-- input2: 0v = capture, 5v = loop (continuous)
 -- output1-4: delay equaly spaced delay taps
 
-LENGTH = 100 -- sets loop time
--- closer to LENGTH is shorter, closer to 0 is longer
-taps = { 1
-       , 26
-       , 51
-       , 76
-       }
+LENGTH = 1000 -- max loop time. MUST BE CONSTANT
+public.add('tap1', 250, {1,LENGTH,'slider'})
+public.add('tap2', 500, {1,LENGTH,'slider'})
+public.add('tap3', 750, {1,LENGTH,'slider'})
+public.add('tap4', LENGTH, {1,LENGTH,'slider'})
+public.add('loop', 0.0, {0,1,'slider'})
 
---private vars
 bucket = {}
 write = 1
+cv_mode = 0
 function init()
-    input[1].mode( 'stream', 0.01 ) -- 100Hz fastest stable
-    for n=1,4 do output[n].slew = 0.01 end
+    input[1].mode('stream', 0.001) -- 1kHz
+    for n=1,4 do output[n].slew = 0.002 end -- smoothing at nyquist
     for n=1,LENGTH do bucket[n] = 0 end
 end
 
 input[1].stream = function(v)
-    c = input[2].volts / 4.5
-    c = (c < 0) and 0 or c
-    c = (c > 1) and 1 or c
-    bucket[write] = v + c*(bucket[write] - v)
-    write = (write % LENGTH) + 1
-    for n=1,4 do
-        taps[n] = (taps[n] % LENGTH) + 1
-        output[n].volts = bucket[math.floor(taps[n])]
+    local function poke(v)
+        local c = (input[2].volts / 4.5) + public.loop
+        c = (c < 0) and 0 or c
+        c = (c > 1) and 1 or c
+        bucket[write] = v + c*(bucket[write] - v)
     end
+    local function peek(ch, tap)
+        local ix = (math.floor(write - tap - 1) % LENGTH) + 1
+        output[ch].volts = bucket[ix]
+    end
+    peek(1, public.tap1)
+    peek(2, public.tap2)
+    peek(3, public.tap3)
+    peek(4, public.tap4)
+    poke(v)
+    write = (write % LENGTH) + 1
 end
