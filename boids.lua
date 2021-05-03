@@ -1,6 +1,9 @@
--- boids
+--- boids
 -- t gill 190925
 -- inspired by http://www.vergenet.net/~conrad/boids/pseudocode.html
+-- in1: influence center
+-- in2: influence acceleration
+-- out1-4: slewed voltage
 
 -- params
 follow = 0.75 -- input=1, free=0

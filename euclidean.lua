@@ -1,4 +1,4 @@
----  Euclidean Rhythms
+---  euclidean rhythms
 -- sam wolk 2019.10.21
 -- Create 4 euclidean rhythm generators
 -- in1: clock

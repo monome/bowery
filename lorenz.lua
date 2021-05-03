@@ -1,13 +1,13 @@
--- Lorenz Attractor
--- s wolk 2019.10.13
--- Input 1 resets the attractor to the {x,y,z} coordinates stored in Lorenz.origin.
--- Input 2 controls the speed of the attractor.
--- Output 1 is the x-coordinate (by default)
--- Output 2 is the y-coordinate (by default)
--- Output 3 is the z-coordinate (by default)
--- Output 4 is a weighted sum of x and y (by default)
--- The config table allows you to deactivate the attractor for outputs and take direct control.
--- The weights table allows you to specify the weight of each variable for each output.
+--- lorenz attractor
+-- sam wolk 2019.10.13
+-- in1 resets the attractor to the {x,y,z} coordinates stored in the Lorenz.origin table
+-- in2 controls the speed of the attractor
+-- out1 is the x-coordinate (by default)
+-- out2 is the y-coordinate (by default)
+-- out3 is the z-coordinate (by default)
+-- out4 is a weighted sum of x and y (by default)
+-- the config table allows you to deactivate the attractor for outputs and take direct control.
+-- the weights table allows you to specify the weight of each variable for each output.
 
 config = {'on','on','on','on'}
 weights = {{1,0,0},{0,1,0},{0,0,1},{0.33,0.33,0}}

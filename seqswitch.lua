@@ -1,6 +1,7 @@
 --- sequential switch
--- input 1 is signal, input 2 is switch
--- input 1 is sequentially sent to each output
+-- in1: signal
+-- in2: switch
+-- out1-4: i1 sent through sequentially
 
 -- user settings
 hold       = true -- when switch closes, should hold last value?

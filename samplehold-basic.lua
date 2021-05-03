@@ -1,4 +1,4 @@
---- sample & hold
+--- sample + hold (scripting example)
 -- in1: sampling clock
 -- out1: random sample
 
