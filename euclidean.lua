@@ -49,13 +49,13 @@ end
 input[1].change = function(state) 
 	for i=1,4 do
 		--- increment counters
-		locations[i] = (locations[i] + 1) % lengths[i]
+		locations[i] = (locations[i] + 1) % public.lengths[i]
 		
 		-- get current location
-		local index = (locations[i] + offsets[i]) % lengths[i]
+		local index = (locations[i] + public.offsets[i]) % public.lengths[i]
 
 		-- create pulse if there is an event
-		if er(fills[i], lengths[i], index+1) then
+		if er(public.fills[i], public.lengths[i], index+1) then
 			output[i]()
 		end
 	end
