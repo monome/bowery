@@ -79,6 +79,7 @@ end
 
 function boids_run(c)
   local boids = init_boids()
+  local c = 0
   while true do
     c = (c % COUNT)+1 -- round-robin calculation
     boids[c] = move( boids, c, input[1].volts, (input[2].volts+5.0)/5.0 )
