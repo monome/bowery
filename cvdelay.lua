@@ -9,7 +9,7 @@ public.add('tap1', 250, {1,LENGTH,'slider'})
 public.add('tap2', 500, {1,LENGTH,'slider'})
 public.add('tap3', 750, {1,LENGTH,'slider'})
 public.add('tap4', LENGTH, {1,LENGTH,'slider'})
-public.add('loop', 0.0, {0,1,'slider'})
+public.add('loop', 0.01, {0,1,'slider'})
 
 bucket = {}
 write = 1
