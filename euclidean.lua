@@ -5,9 +5,9 @@
 -- outs: euclidean rhythms
 
 -- ER parameters for each channel.
-public.add('lengths', {16,16,16,16})
-public.add('fills', {4,5,9,12})
-public.add('offsets', {0,0,0,0})
+public{lengths = {16,16,16,16}}
+public{fills = {4,5,9,12}}
+public{offsets = {0,0,0,0}}
 
 -- private state
 locations = {-1,-1,-1,-1}
