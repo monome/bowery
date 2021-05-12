@@ -5,11 +5,11 @@
 
 LENGTH = 1000 -- max loop time. MUST BE CONSTANT
 
-public.add('tap1', 250, {1,LENGTH,'slider'})
-public.add('tap2', 500, {1,LENGTH,'slider'})
-public.add('tap3', 750, {1,LENGTH,'slider'})
-public.add('tap4', LENGTH, {1,LENGTH,'slider'})
-public.add('loop', 0.01, {0,1,'slider'})
+public{tap1 = 250}:range(1,LENGTH):type'slider'
+public{tap2 = 500}:range(1,LENGTH):type'slider'
+public{tap3 = 750}:range(1,LENGTH):type'slider'
+public{tap4 = 1000}:range(1,LENGTH):type'slider'
+public{loop = 0.01}:range(0,1):type'slider'
 
 bucket = {}
 write = 1
