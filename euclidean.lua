@@ -6,7 +6,7 @@
 
 -- ER parameters for each channel.
 public{lengths = {16,16,16,16}}
-public{fills = {4,5,9,12}}
+public{fills = {4,5,9,12}}:range(1,64)
 public{offsets = {0,0,0,0}}
 
 -- private state
