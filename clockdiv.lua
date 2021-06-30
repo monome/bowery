@@ -3,32 +3,29 @@
 -- in2: division selector (see divs)
 -- out1-4: divided outputs
 
--- choose your clock divisions
-divs = { {5,7,11,13} -- -5V
-       , {3,5,7,11}
-       , {2,3,5,7} -- 0V
-       , {2,4,8,16}
-       , {4,8,16,32} -- +5V
-       }
-
--- private vars
-count = {1,1,1,1}
-function init()
-    input[1].mode('change')
-    input[2].mode('none')
-    for n=1,4 do
-        output[n].slew = 0.001
-    end
-
+function newdiv(tab)
+  for n=1,4 do
+    output[n].clock_div = tab[n]
+  end
 end
 
-input[1].change = function(s)
-    sel = math.floor(input[2].volts/2 + 3.5)
-    if sel > 5 then sel = 5 elseif sel < 1 then sel = 1 end
-    if s then
-        for n=1,4 do
-            count[n] = (count[n] % divs[sel][n])+1
-            output[n].volts = count[n] <= (divs[sel][n]/2) and 5 or 0
-        end
-    end
+-- choose your clock divisions
+public.add('win1', {5,7,11,13}, newdiv)
+public.add('win2', {3,5,7,11}, newdiv)
+public.add('win3', {2,3,5,7}, newdiv)
+public.add('win4', {2,4,8,16}, newdiv)
+public.add('win5', {4,8,16,32}, newdiv)
+
+WINDOWS = {public.win1, public.win2, public.win3, public.win4, public.win5}
+
+function init()
+  input[1].mode('clock',1/4)
+  input[2].mode('window', {-3,-1,1,3})
+  for n=1,4 do
+    output[n]:clock(public.win3[n])
+  end
+end
+
+input[2].window = function(win, dir)
+  newdiv(WINDOWS[win])
 end

@@ -7,69 +7,43 @@
 -- out3: in2 quantized to scale3 continuously
 -- out4: trigger pulses when out3 changes
 
--- nb: scales should be written as semitones (cents optional) in ascending order
-octaves = {0,12}
-major = {0,2,4,5,7,9,11,12}
-harmonicMinor = {0,2,3,5,7,8,10,12}
-dorian = {0,2,3,5,7,9,10,12}
-majorTriad = {0,4,7,12}
-dominant7th = {0,4,7,10,12}
+snum = {'octave','chroma','major','harMin','dorian','majTri','dom7th','wholet'}
 
--- try re-assigning scale1/2/3 to change your quantizer!
-scale1 = major
-scale2 = harmonicMinor
-scale3 = majorTriad
+public.add('scale1','major',snum
+  , function(s) output[1].scale = scales[s] end)
+public.add('scale2','harMin',snum
+  , function(s) output[2].scale = scales[s] end)
+public.add('scale3','majTri',snum
+  , function(s) input[2].mode('scale',scales[s]) end)
 
+scales =
+{ octave = {0}
+, chroma = {} -- this is a shortcut
+, major  = {0,2,4,5,7,9,11}
+, harMin = {0,2,3,5,7,8,10}
+, dorian = {0,2,3,5,7,9,10}
+, majTri = {0,4,7}
+, dom7th = {0,4,7,10}
+, wholet = {0,2,4,6,8,10}
+}
 
-function quantize(volts,scale) 
-	local octave = math.floor(volts)
-	local interval = volts - octave
-	local semitones = interval / 12
-	local degree = 1
-	while degree < #scale and semitones > scale[degree+1]  do
-		degree = degree + 1
-	end
-	local above = scale[degree+1] - semitones
-	local below = semitones - scale[degree]
-	if below > above then 
-		degree = degree +1
-	end
-	local note = scale[degree]
-	note = note + 12*octave
-	return note
-end
-
--- sample & hold handler; sets out1 & out2
+-- update clocked outputs
 input[1].change = function(state)
-	-- sample input[2]
-	local v = input[2].volts
-	
-	-- quantize voltage to scale
-	local note1 = quantize(v,scale1)
-	local note2 = quantize(v,scale2)
-		
-	-- convert semitones to volts and update out1 & out2
-	output[1].volts = note1/12
-	output[2].volts = note2/12
+  output[1].volts = input[2].volts
+  output[2].volts = input[2].volts
 end
 
--- streaming handler; sets out3 & out4
-input[2].stream = function(volts)
-	-- find current quantized note
-	local newNote = quantize(volts,scale3)
-	
-	-- check if quantized voltage is equal to current voltage
-	if newNote/12 ~= output[3].volts then
-		-- if not, update out3 to new voltage and pulse out4
-		output[3].volts = newNote/12
-		output[4](pulse(0.01,8))
-	end
+-- update continuous quantizer
+input[2].scale = function(s)
+  output[3].volts = s.volts
+  output[4]()
 end
-
 
 function init()
-	input[1].mode('change',1,0.1,'rising')
-	input[2].mode('stream',0.05)
-	print('quantizer loaded')
+  input[1].mode('change',1,0.1,'rising')
+  input[2].mode('scale',public.scale3)
+  output[1].scale(public.scale1)
+  output[2].scale(public.scale2)
+  output[4].action = pulse(0.01, 8)
 end
 

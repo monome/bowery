@@ -5,29 +5,29 @@
 -- in2: influence acceleration
 -- out1-4: slewed voltage
 
--- params
-follow = 0.75 -- input=1, free=0
-pull   = 0.5  -- to centre
-avoid  = 0.1  -- V threshold
-sync   = 1/20 -- dir attraction
-limit  = 0.05 -- max volts per timestep
-
-timing = 0.02 -- calc speed
+-- TODO refine ranges & apply 'expo' where appropriate
+public.add('follow', 0.75, {0, 1}) -- input=1, free=0. influence of input[1] over centre of mass
+public.add('pull',   0.5, {0, 1})  -- pull boids toward their centre of mass
+public.add('avoid',  0.1, {0, 1})  -- voltage difference under which boids repel
+public.add('sync',   1/20, {0, 1}) -- amount by which boids copy each other's direction
+public.add('limit',  0.05, {0, 0.3}) -- limit boids instantaneous movement to reduce over-correction
+public.add('timing', 0.02, {0.005, 0.2} -- timestep for simulation
+  , function(v) for n=1,4 do output[n].slew = n*2 end end) -- calc speed TODO use Hz not seconds?
 
 boids = {}
-count = 4
+COUNT = 4 -- only first 4 are output
 
 -- artificially provide a 'centre-of-mass'
 function centring(b,c)
-  return (c - b.p) * pull
+  return (c - b.p) * public.pull
 end
 
 function avoidance(bs,b)
-  v = 0
-  for n=1,count do
+  local v = 0
+  for n=1,COUNT do
     if bs[n] ~= b then -- ignore self
-      d = bs[n].p - b.p
-      if math.abs(d) < avoid then
+      local d = bs[n].p - b.p
+      if math.abs(d) < public.avoid then
         v = v - d/2
       end
     end
@@ -36,55 +36,40 @@ function avoidance(bs,b)
 end
 
 function syncing(bs,b)
-  v = 0
-  for n=1,count do
+  local v = 0
+  for n=1,COUNT do
     if bs[n] ~= b then -- ignore self
       v = v + bs[n].v
     end
   end
-  v = v / (count-1)
-  return (v - b.v) * sync
+  v = v / (COUNT-1)
+  return (v - b.v) * public.sync
 end
 
 function findcentre(bs,c)
-  m = 0
-  for n=1,count do
+  local m = 0
+  for n=1,COUNT do
     m = m + bs[n].p
   end
-  m = m/count
-  return m + follow*(c-m)
+  m = m/COUNT
+  return m + public.follow*(c-m)
 end
 
 function move( bs, n, c, v )
-  mass = findcentre(bs,c)
-  b = bs[n]
-  v1 = centring(b,mass)
-  v2 = avoidance(bs,b)
-  v3 = syncing(bs,b)
-  b.v = b.v + v1 + v2 + v3
-  if b.v > limit then b.v = limit
-  elseif b.v < -limit then b.v = -limit end
+  local b = bs[n]
+  b.v = b.v + centring(b, findcentre(bs, c))
+            + avoidance(bs, b)
+            + syncing(bs, b)
+  if b.v > public.limit then b.v = public.limit
+  elseif b.v < -public.limit then b.v = -public.limit end
   b.v = b.v * v
   b.p = b.p + b.v
   return b
 end
 
-function draw( b, n, v )
-  output[n].slew  = v*1.1
-  output[n].volts = b.p
-end
-
--- round-robin calculation
-function step(c)
-  c = (c % count)+1
-  accel = input[2].volts
-  draw( boids[c], c, timing )
-  boids[c] = move( boids, c, input[1].volts, (accel+5.0)/5.0 )
-end
-
 function init_boids()
   local bs = {}
-  for n=1,count do
+  for n=1,COUNT do
     bs[n] = { p = math.random()*3.0 - 1.0
             , v = 0
             }
@@ -92,11 +77,17 @@ function init_boids()
   return bs
 end
 
+function boids_run(c)
+  local boids = init_boids()
+  while true do
+    c = (c % COUNT)+1 -- round-robin calculation
+    boids[c] = move( boids, c, input[1].volts, (input[2].volts+5.0)/5.0 )
+    if c <= 4 then output[c].volts = boids[c].p end -- apply updated voltage to output
+    clock.sleep(public.timing / COUNT) -- TODO try sleep(0) for maximum speed?
+  end
+end
+
 function init()
-  boids = init_boids()
-  mover = metro.init{ event = step
-                    , time  = timing/count
-                    , count = -1
-                    }
-  mover:start()
+  for n=1,4 do public.view.output[n]() end -- visualize location of all 4 boids 
+  clock.run(boids_run)
 end

@@ -5,46 +5,35 @@
 -- out1-4: newest to oldest output
 -- ii: 6 stages of ASR via just friends
 
-reg = {}
-reg_LEN = 4
+-- public params
+public.add('portamento', 0, {0, 0.5}, function(v) for n=1,4 do output[n].slew = v end end)
+public.add('ii_dest', 'none', {'none','jf','wsyn'}
+    , function(e) if e=='jf' then ii.jf.mode(1) end end) -- enable synthesis mode
+public.add('ii_velo', 2, {0.1, 5})
 
-q = {}
-function init()
-    for n=1,4 do
-        output[n].slew = 0
-    end
-    input[1].mode('none')
-    input[2]{ mode      = 'change'
-            , direction = 'rising'
-            }
-    for i=1,reg_LEN do
-        reg[i] = input[1].volts
-    end
-    ii.jf.mode(1)
-    metro[1].event = iiseq
-    metro[1].time  = 0.005
-    metro[1]:start()
-end
+-- global state
+reg = {0,0,0,0,0,0}
 
--- hack to allow 6note polyphony by staggering with metro
-function iiseq()
-    if #q > 0 then
-        ii.jf.play_note(table.remove(q),2)
+function make_notes(r)
+  for n=1,4 do
+    output[n].volts = r[n]
+  end
+  if public.ii_dest ~= 'none' then
+    local count = (public.ii_dest == 'jf') and 6 or 4
+    for n=1,count do
+      ii[public.ii_dest]play_note(r[n], public.ii_velo)
     end
-end
-
-function update(r)
-    for n=1,4 do
-        output[n].volts = r[n]
-    end
-    for n=1,6 do
-        table.insert(q, r[n]) -- queue a note for i2c transmission
-    end
+  end
 end
 
 input[2].change = function()
-    capture = input[1].volts
-    table.remove(reg)
-    table.insert(reg, 1, input[1].volts)
-    update(reg)
+  make_notes(reg) -- send old values first
+  table.remove(reg)
+  table.insert(reg, 1, input[1].volts) -- insert at start to force rotation
+end
+
+function init()
+  input[2]{ mode      = 'change'
+          , direction = 'rising'
+          }
 end

@@ -1,67 +1,69 @@
----  euclidean rhythms
+--- 4 euclidean rhythm generators
 -- sam wolk 2019.10.21
--- Create 4 euclidean rhythm generators
 -- in1: clock
 -- in2: reset
 -- outs: euclidean rhythms
 
 -- ER parameters for each channel.
-lengths = {16,16,16,16}
-fills = {4,5,9,12}
-offsets = {0,0,0,0}
+public.add('lengths', {16,16,16,16})
+public.add('fills', {4,5,9,12})
+public.add('offsets', {0,0,0,0})
 
--- Non-User Variables
-locations = {-1,-1,-1,-1} --
+-- private state
+locations = {-1,-1,-1,-1}
 
 -- ER function adapted from  https://gist.github.com/vrld/b1e6f4cce7a8d15e00e4
--- k > Euclidean Fill
--- n > Euclidean Length
--- s > current step (0-indexed)
-function er(k,n,s)
+function er(fill, length, ix)
     local r = {}
-    for i = 1,n do
-        r[i] = {i <= k}
+    -- place all filled slots at the start of the rhythm
+    for i=1,length do
+        r[i] = {i <= fill}
     end
-    local function cat(i,k)
-        for _,v in ipairs(r[k]) do
-            r[i][#r[i]+1] = v
+    -- each element is now a table with either true or false
+
+    local function cat(t, dst, src)
+        -- copy all elements of t[src] to the end of t[dst] and remove t[src]
+        for _,v in ipairs(t[src]) do
+            table.insert(t[dst], v)
         end
-        r[k] = nil
+        t[src] = nil
     end
-    
-    while #r > k do
-        for i = 1,math.min(k, #r-k) do
-            cat(i, #r)
+
+    -- interleave the empty slots until they are spread out evenly
+    while #r > fill do
+        for i=1,math.min(fill, #r-fill) do
+            cat(r, i, #r)
         end
     end
 
+    -- fold all lists down to a single one
     while #r > 1 do
-       cat(#r-1, #r) 
+       cat(r, #r-1, #r) 
     end
 
-    return r[1][s+1]
+    -- return boolean (and discard table)
+    return r[1][ix]
 end
 
 -- Use a trigger to advance ER counters and activate ASLs on hits
 input[1].change = function(state) 
 	for i=1,4 do
 		--- increment counters
-		locations[i] = ((locations[i]+1) % lengths[i])
+		locations[i] = (locations[i] + 1) % lengths[i]
 		
 		-- get current location
-		local index = ((locations[i]+offsets[i]) % lengths[i])
-		
-		-- fire asl if there is a hit
-		if er(fills[i],lengths[i],index) then
+		local index = (locations[i] + offsets[i]) % lengths[i]
+
+		-- create pulse if there is an event
+		if er(fills[i], lengths[i], index+1) then
 			output[i]()
 		end
 	end
 end
 
--- Use a trigger to reset locations
 input[2].change = function(state)
 	for i=1,4 do
-		locations[i]=-1
+		locations[i] = -1 -- reset locations
 	end
 end
 

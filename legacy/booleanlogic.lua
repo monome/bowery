@@ -4,18 +4,13 @@
 -- out3: 1 XOR 2
 -- out4: true on 1rising, false on 2rising
 
-g = {false, false}
-flipflop = false
+g = {false, false} -- state of the input gates
+flipflop = false -- state of the flipflop
 function init()
     for n=1,2 do
         input[n].mode('change')
         g[n] = input[n].volts > 1.0
     end
-    for n=1,4 do output[n].slew = 0.001 end
-end
-
-function xor(a,b)
-    return (a and not b) or (not a and b)
 end
 
 function logic( chan, state )
@@ -24,7 +19,7 @@ function logic( chan, state )
 
     output[1].volts = (g[1] and g[2]) and 5 or 0
     output[2].volts = (g[1] or g[2]) and 5 or 0
-    output[3].volts = xor( g[1], g[2] ) and 5 or 0
+    output[3].volts = (g[1] ~= g[2]) and 5 or 0 -- XOR is the same as not-equal
     output[4].volts = flipflop and 5 or 0
 end
 
