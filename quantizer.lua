@@ -1,5 +1,6 @@
 --- quantizer
 -- sam wolk 2019.10.15
+-- updated by whimsicalraps 2021
 -- in1: clock
 -- in2: voltage to quantize
 -- out1: in2 quantized to scale1 on clock pulses
@@ -41,9 +42,9 @@ end
 
 function init()
   input[1].mode('change',1,0.1,'rising')
-  input[2].mode('scale',public.scale3)
-  output[1].scale(public.scale1)
-  output[2].scale(public.scale2)
+  input[2].mode('scale',scales[public.scale3])
+  output[1].scale(scales[public.scale1])
+  output[2].scale(scales[public.scale2])
   output[4].action = pulse(0.01, 8)
 end
 

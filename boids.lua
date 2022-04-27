@@ -6,13 +6,13 @@
 -- out1-4: slewed voltage
 
 -- TODO refine ranges & apply 'expo' where appropriate
-public.add('follow', 0.75, {0, 1}) -- input=1, free=0. influence of input[1] over centre of mass
-public.add('pull',   0.5, {0, 1})  -- pull boids toward their centre of mass
-public.add('avoid',  0.1, {0, 1})  -- voltage difference under which boids repel
-public.add('sync',   1/20, {0, 1}) -- amount by which boids copy each other's direction
-public.add('limit',  0.05, {0, 0.3}) -- limit boids instantaneous movement to reduce over-correction
-public.add('timing', 0.02, {0.005, 0.2} -- timestep for simulation
-  , function(v) for n=1,4 do output[n].slew = n*2 end end) -- calc speed TODO use Hz not seconds?
+public{follow = 0.75}:range(0, 1) -- input=1, free=0. influence of input[1] over centre of mass
+public{pull = 0.5}:range(0, 1)  -- pull boids toward their centre of mass
+public{avoid = 0.1}:range(0, 1)  -- voltage difference under which boids repel
+public{sync = 1/20}:range(0, 1) -- amount by which boids copy each other's direction
+public{limit = 0.05}:range(0, 0.3) -- limit boids instantaneous movement to reduce over-correction
+public{timing = 0.02}:xrange(0.001, 0.2) -- timestep for simulation
+  :action(function(v) for n=1,4 do output[n].slew = v*2 end end) -- calc speed TODO use Hz not seconds?
 
 boids = {}
 COUNT = 4 -- only first 4 are output
@@ -79,6 +79,7 @@ end
 
 function boids_run(c)
   local boids = init_boids()
+  local c = 0
   while true do
     c = (c % COUNT)+1 -- round-robin calculation
     boids[c] = move( boids, c, input[1].volts, (input[2].volts+5.0)/5.0 )

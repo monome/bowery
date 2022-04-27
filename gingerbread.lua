@@ -33,4 +33,5 @@ input[1].change = function()
     output[n*2-1].volts = gs[n].x
     output[n*2].volts = gs[n].y
   end
+  for n=1,4 do public.view.output[n]() end
 end

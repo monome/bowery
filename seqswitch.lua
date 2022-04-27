@@ -4,7 +4,7 @@
 -- out1-4: i1 sent through sequentially
 
 -- user settings
-public.add('mode', 'hold', {'hold','zero'}) -- when switch closes, should hold last value?
+public{mode = 'hold'}:options{'hold','zero'} -- when switch closes, should hold last value?
 
 -- private
 dest = 1
