@@ -9,7 +9,7 @@
 - [euclidean.lua](euclidean.lua): a euclidean rhythm generator
 - [gingerbread.lua](gingerbread.lua): clocked chaos generators
 - [jfstrum.lua](jfstrum.lua): i2c strum sequencer for just friends and w/syn
-- [krahenlied.lua](krahenlied.lua): sequence pitches and envelopes with poetry
+- [krahenlied.lua](krahenlied.lua): sequence synth voices with poetry
 - [lorenz.lua](lorenz.lua): lorenz attractor chaotic lfos
 - [quantizer.lua](quantizer.lua): a continuous and clocked quantizer demo
 - [samplehold-basic](samplehold-basic.lua): sample and hold basics for scripting tutorial
