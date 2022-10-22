@@ -7,6 +7,7 @@
 - [cvdelay.lua](cvdelay.lua): a control voltage delay with four taps & looping option
 - [euclidean.lua](euclidean.lua): a euclidean rhythm generator
 - [gingerbread.lua](gingerbread.lua): clocked chaos generators
+- [krahenlied.lua](krahenlied.lua): sequence pitches and envelopes with poetry
 - [lorenz.lua](lorenz.lua): lorenz attractor chaotic lfos
 - [quantizer.lua](quantizer.lua): a continuous and clocked quantizer demo
 - [samplehold-basic](samplehold-basic.lua): sample and hold basics for scripting tutorial
