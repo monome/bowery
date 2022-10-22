@@ -1,6 +1,7 @@
 # bowery
 [druid](github.com/monome/druid) script collection
 
+- [alphabetsequencer.lua](alphabetsequencer.lua): sequence synth voices with sequins
 - [boids.lua](boids.lua): four simulated birds that fly around your input
 - [booleanlogic.lua](booleanlogic.lua): logic gates determined by two input gates
 - [clockdiv.lua](clockdiv.lua): four configurable clock divisions of the input clock
