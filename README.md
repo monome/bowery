@@ -1,5 +1,5 @@
 # bowery
-[druid](github.com/monome/druid) script collection
+[druid](https://github.com/monome/druid) script collection
 
 - [alphabetsequencer.lua](alphabetsequencer.lua): sequence synth voices with sequins
 - [boids.lua](boids.lua): four simulated birds that fly around your input
@@ -18,4 +18,3 @@
 - [shiftregister.lua](shiftregister.lua): output the last 4 captured voltages & play just friends
 
 learn how to upload scripts to crow using [***stage one*** of the crow scripting tutorial](https://monome.org/docs/crow/scripting)
-
