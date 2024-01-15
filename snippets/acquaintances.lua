@@ -18,7 +18,7 @@ function init()
 end
 
 function update_speeds(v)
-    local freq = math.exp(2, -(v+offset))
+    local freq = 2^(-(v+offset))
     local intone = math.min(5, math.max(-5, input[2].volts / 5))
     if intone >= 0 then
         for n=1,4 do
